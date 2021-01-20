@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .table tr td {
+            text-align: right;
+        }
+
+        table tr th {
+            width: 5rem;
+        }
+
+        .true {
+            background-color: #aaffaa;
+        }
+
+        .false {
+            background-color: #ffaaaa;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form class="form">
+        <input id="money" type="text">
+        <input id="submit-money" type="submit">
+        <fieldset>
+
+            <legend>Quem Consumiu?</legend>
+            <input id="checkbox-vitor" type="checkbox"><label for="checkbox-vitor">Vitor</label>
+            <input id="checkbox-debora" type="checkbox"><label for="checkbox-debora">Debora</label>
+            <input id="checkbox-samanta" type="checkbox"><label for="checkbox-samanta">Samanta</label>
+            <input id="checkbox-fernanda" type="checkbox"><label for="checkbox-fernanda">Fernanda</label>
+
+        </fieldset>
+    </form>
+
+    <table class="table">
+
+    </table>
+
+    <script>
+
+        const data = JSON.parse(localStorage.getItem('tableContent')) || [];
+
+        const table = document.querySelector('.table');
+
+        handleMoney(false)
+
+        // SUBMIT EVENT
+        document.querySelector('.form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleMoney(true);
+        });
+
+        // GET DATA FROM FORM
+        function getData() {
+
+            return {
+                money: Number((document.getElementById('money').value).replace(',', '.')),
+                check: [
+                    document.getElementById('checkbox-vitor').checked,
+                    document.getElementById('checkbox-debora').checked,
+                    document.getElementById('checkbox-samanta').checked,
+                    document.getElementById('checkbox-fernanda').checked,
+                ]
+            }
+        };
+
+        // CREATE AND APPEND A ROW TO THE TABLE
+        function createRow(contents, i) {
+
+            const check = contents.check;
+
+            const row = document.createElement('TR');
+
+            const moneyCell = document.createElement('TD');
+            moneyCell.setAttribute('class', 'cell-money')
+            const moneyCellText = document.createTextNode(contents.money);
+            moneyCell.appendChild(moneyCellText)
+
+            row.appendChild(moneyCell);
+            row.setAttribute('class', 'body-row')
+
+            contents.check.forEach(isCheck => {
+
+                const cell = document.createElement('TD');
+
+                if (isCheck === true) cell.setAttribute('class', 'true');
+                else cell.setAttribute('class', 'false')
+
+                row.appendChild(cell);
+
+            });
+
+            const deleteCell = document.createElement('TD');
+            deleteCell.setAttribute('key', i)
+            deleteCell.addEventListener('click', e => {
+                const index = e.target.getAttribute('key');
+                data[index] = undefined;
+
+                handleMoney(false)
+
+            })
+            const deleteText = document.createTextNode('x');
+            deleteCell.appendChild(deleteText)
+
+            row.appendChild(deleteCell)
+
+            table.appendChild(row)
+
+        };
+
+        // FILLS THE TRUE CELLS WITH THE RESPECTIVE AMOUNT OF MONEY
+        function fillCells(rows) {
+            rows.forEach(row => {
+
+                const moneyRow = row.querySelector('.cell-money').innerText;
+                const trueCells = row.querySelectorAll('.true');
+                const moneyCell = (moneyRow / trueCells.length).toFixed(2);
+
+                trueCells.forEach(cell => {
+                    cell.innerText = moneyCell;
+                })
+
+            });
+        }
+
+        // CREATE TABLE HEADER
+        function createFirstRow() {
+
+            const headersNames = ['Valor', 'Vitor', 'Debora', 'Samanta', 'Fernanda'];
+            const firstRow = document.createElement('TR');
+
+            for (let i = 0; i < headersNames.length; i++) {
+
+                const firstRowCell = document.createElement('TH');
+                const firstRowCellText = document.createTextNode(headersNames[i]);
+                firstRowCell.appendChild(firstRowCellText);
+                firstRow.appendChild(firstRowCell);
+
+            };
+
+            table.appendChild(firstRow);
+
+        };
+
+        // CREATE TABLE TOTAL
+        function createLastRow(rows) {
+
+            const lastRow = document.createElement('TR');
+
+            for (let i = 0; i < 5; i++) {
+
+                let totalCollum = 0
+                rows.forEach(row => {
+                    totalCollum += Number(row.querySelector('td:nth-child(' + (i + 1) + ')').innerText);
+                });
+                const lastRowCell = document.createElement('TD');
+                lastRowCell.innerText = totalCollum.toFixed(2);
+                lastRow.appendChild(lastRowCell);
+
+            }
+
+            table.appendChild(lastRow);
+
+        }
+
+        function handleMoney(isSubmit) {
+
+            table.innerHTML = '';
+
+            createFirstRow();
+
+            if (isSubmit) data[data.length] = getData();
+
+            data.forEach((content, i) => {
+                if (content) {
+                    createRow(content, i)
+                }
+            });
+
+            localStorage.setItem('tableContent', JSON.stringify(data))
+
+            const rows = document.querySelectorAll('.table tr.body-row');
+            fillCells(rows);
+            createLastRow(rows);
+
+        };
+
+    </script>
+</body>
+
+</html>
