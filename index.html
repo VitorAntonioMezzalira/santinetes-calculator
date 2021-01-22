@@ -40,7 +40,7 @@
     <p>
         <label for="total-money">Valor da Nota: </label>
         <input type="text" id="total-money">
-        <button onclick="openInvoice()">Abrir Nota</button>
+        <button onclick="openInvoice(true)">Iniciar</button>
     </p>
 
     <div class="portion-calculator">
@@ -62,9 +62,15 @@
             <!-- Calculated Portions -->
         </table>
         <div class="invoice-info">
-            <p><label for="total-invoice">Total: </label><input id="total-invoice" type="text"></p>
-            <p><label for="discount-invoice">Descontos: </label><input id="discount-invoice" type="text"></p>
-            <p><label for="rest-invoice">Resto: </label><input id="rest-invoice" type="text"></p>
+            <p>
+                <label for="key">Nota: </label>
+                <input id="key" type="text"> 
+                <button onclick="openInvoice(false)">Abrir Nota</button>
+            </p>
+            <p><label for="total-invoice">Total: </label><input disabled="true" id="total-invoice" type="text"></p>
+            <p><label for="discount-invoice">Descontos: </label><input disabled="true" id="discount-invoice"
+                    type="text"></p>
+            <p><label for="rest-invoice">Resto: </label><input disabled="true" id="rest-invoice" type="text"></p>
         </div>
 
     </div>
@@ -76,7 +82,11 @@
     </table>
 
     <script type="text/javascript" src="./script.js"></script>
+    <script type="text/javascript" src="./tableBuilder.js"></script>
+
     <script type="text/javascript">
+
+        const portionCalculator = document.querySelector('.portion-calculator');
 
         function openForm() {
             portionCalculator.style.display = 'block';

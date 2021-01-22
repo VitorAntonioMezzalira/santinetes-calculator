@@ -1,62 +1,51 @@
-// INVOICE
+let invoices = []
 
-let invoice = {
-    value: 0,
-    rest: 0,
-    discount: 0,
-    portions: []
-};
+// DISCOUNT
+function invoiceDiscount(invoice) {
+    let discount = 0;
+    for (let i = 0; i < invoice.portions.length; i++) {
+        discount += invoice.portions[i].money;
+    }
+    return discount
+}
+// REST 
+function invoiceRest(invoice) {
+    return invoice.value - invoiceDiscount(invoice)
+}
 
-const portionCalculator = document.querySelector('.portion-calculator');
+// OPEN
+function openInvoice(isSubmit) {
 
-function openInvoice() {
-
-    invoice = {
-        value: 0,
-        rest: 0,
-        discount: 0
+    let key = 0
+    if (isSubmit) {
+        invoices[invoices.length] = {
+            value: Number((document.getElementById('total-money').value).replace(',', '.')),
+            portions: []
+        };
+        key = (invoices.length - 1);
+    } else {
+        key = (document.getElementById('key').value)
     }
 
-    portions = []
-
-    invoice.value = Number((document.getElementById('total-money').value).replace(',', '.'));
-    invoice.rest = invoice.value
-
-    document.getElementById('total-invoice').value = invoice.value
-    document.getElementById('rest-invoice').value = invoice.value
-
-    calculateInvoice()
-
+    refreshInvoiceInfo(invoices[invoices.length - 1], key);
+    handleMoney(false, key)
     openForm();
-
 }
-
+// CLOSE
 function finishInvoice() {
-
     closeForm();
-
 }
 
-function calculateInvoice() {
-    invoice.discount = 0
-    portions.forEach(portion => {
-        if (portion) invoice.discount += portion.money;
-    })
-
-    invoice.rest = invoice.value - invoice.discount;
-
-    refreshInvoiceInfo()
-
-}
-
-function refreshInvoiceInfo() {
+// INFO
+function refreshInvoiceInfo(invoice, key) {
+    console.log(invoice)
+    document.getElementById('key').value = key;
     document.getElementById('total-invoice').value = (invoice.value).toFixed(2);
-    document.getElementById('rest-invoice').value = (invoice.rest).toFixed(2);
-    document.getElementById('discount-invoice').value = (invoice.discount).toFixed(2);
+    document.getElementById('rest-invoice').value = (invoiceRest(invoice)).toFixed(2);
+    document.getElementById('discount-invoice').value = (invoiceDiscount(invoice)).toFixed(2);
 }
 
 // PORTION
-let portions = []
 const table = document.querySelector('.portions-table');
 
 // GET DATA FROM FORM
@@ -74,51 +63,9 @@ function getData() {
 
     if (data.check[0] || data.check[1] || data.check[2] || data.check[3]) {
         return data
-    }
+    };
 
     return false
-
-};
-
-// CREATE AND APPEND A ROW TO THE TABLE
-function createRow(contents, i) {
-
-    const row = document.createElement('TR');
-
-    const moneyCell = document.createElement('TD');
-    moneyCell.setAttribute('class', 'cell-money')
-    const moneyCellText = document.createTextNode(contents.money);
-    moneyCell.appendChild(moneyCellText)
-
-    row.appendChild(moneyCell);
-    row.setAttribute('class', 'body-row')
-
-    contents.check.forEach(isCheck => {
-
-        const cell = document.createElement('TD');
-
-        if (isCheck === true) cell.setAttribute('class', 'true');
-        else cell.setAttribute('class', 'false')
-
-        row.appendChild(cell);
-
-    });
-
-    const deleteCell = document.createElement('TD');
-    deleteCell.setAttribute('key', i)
-    deleteCell.addEventListener('click', e => {
-        const index = e.target.getAttribute('key');
-        portions[index] = undefined;
-
-        handleMoney(false)
-
-    })
-    const deleteText = document.createTextNode('x');
-    deleteCell.appendChild(deleteText)
-
-    row.appendChild(deleteCell)
-
-    table.appendChild(row)
 
 };
 
@@ -137,80 +84,32 @@ function fillCells(rows) {
     });
 }
 
-// CREATE TABLE HEADER
-function createFirstRow() {
+function handleMoney(isSubmit, key) {
 
-    const headersNames = ['Valor', 'Vitor', 'Debora', 'Samanta', 'Fernanda'];
-    const firstRow = document.createElement('TR');
+    table.innerHTML = '';
+    if (isSubmit) invoices[key].portions[invoices[key].portions.length] = getData();
+    refreshInvoiceInfo(invoices[key], key);
+    createTableHeader();
+    createRow({ money: document.getElementById('rest-invoice').value, check: [true, true, true, true] })
 
-    for (let i = 0; i < headersNames.length; i++) {
+    invoices[key].portions.forEach((content, i) => {
+        if (content) {
+            createRow(content, i)
+        }
+    });
 
-        const firstRowCell = document.createElement('TH');
-        const firstRowCellText = document.createTextNode(headersNames[i]);
-        firstRowCell.appendChild(firstRowCellText);
-        firstRow.appendChild(firstRowCell);
-
-    };
-
-    table.appendChild(firstRow);
-
-};
-
-// CREATE TABLE TOTAL
-function createLastRow(rows) {
-
-    const lastRow = document.createElement('TR');
-    lastRow.setAttribute('class', 'total');
-    for (let i = 1; i < 6; i++) {
-
-        let totalCollum = 0
-        rows.forEach(row => {
-            totalCollum += Number(row.querySelector('td:nth-child(' + i + ')').innerText);
-        });
-        const lastRowCell = document.createElement('TD');
-        lastRowCell.innerText = totalCollum.toFixed(2);
-        lastRow.appendChild(lastRowCell);
-
-    }
-
-    table.appendChild(lastRow);
-
-}
-
-function handleMoney(isSubmit) {
-
-    if (getData()) {
-
-        if (isSubmit) portions[portions.length] = getData();
-
-        table.innerHTML = '';
-
-        createFirstRow();
-
-        calculateInvoice()
-
-        createRow({ money: invoice.rest, check: [true, true, true, true] })
-
-        portions.forEach((content, i) => {
-            if (content) {
-                createRow(content, i)
-            }
-        });
-
-        const rows = document.querySelectorAll('.portions-table tr.body-row');
-        fillCells(rows);
-        createLastRow(rows);
-
-    };
+    const rows = document.querySelectorAll('.portions-table tr.body-row');
+    fillCells(rows);
+    createLastRow(rows);
 
 };
 
 // SUBMIT EVENT
 document.querySelector('.portions-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    handleMoney(true);
+    handleMoney(true, document.getElementById('key').value);
 });
 
 // onload Page
 
-handleMoney(false)
+handleMoney(false, (invoices.length - 1))
