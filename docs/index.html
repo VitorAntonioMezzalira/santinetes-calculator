@@ -40,7 +40,7 @@
     <p>
         <label for="total-money">Valor da Nota: </label>
         <input type="text" id="total-money">
-        <button onclick="openInvoice(true)">Iniciar</button>
+        <button id="button-open-invoice">Iniciar</button>
     </p>
 
     <div class="portion-calculator">
@@ -67,9 +67,8 @@
                 <input id="key" type="text"> 
                 <button onclick="openInvoice(false)">Abrir Nota</button>
             </p>
-            <p><label for="total-invoice">Total: </label><input disabled="true" id="total-invoice" type="text"></p>
-            <p><label for="discount-invoice">Descontos: </label><input disabled="true" id="discount-invoice"
-                    type="text"></p>
+            <p><label for="value-invoice">Total: </label><input disabled="true" id="value-invoice" type="text"></p>
+            <p><label for="discount-invoice">Descontos: </label><input disabled="true" id="discount-invoice" type="text"></p>
             <p><label for="rest-invoice">Resto: </label><input disabled="true" id="rest-invoice" type="text"></p>
         </div>
 

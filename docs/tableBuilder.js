@@ -46,7 +46,7 @@ function createRow(contents, i) {
 
     const moneyCell = document.createElement('TD');
     moneyCell.setAttribute('class', 'cell-money')
-    const moneyCellText = document.createTextNode(contents.money);
+    const moneyCellText = document.createTextNode(contents.value);
     moneyCell.appendChild(moneyCellText)
 
     row.appendChild(moneyCell);

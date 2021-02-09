@@ -1,49 +1,47 @@
-let invoices = []
+function Invoice(id, money, portions) {
+    this.id = id;
+    this.value = money;
+    this.portions = portions;
+    this.discount = function() {
+        let discount = 0;
+        this.portions.forEach(portion => {
+            discount += portion.value;
+        });
+        return discount
+    };
+    this.rest = function() {
+        return this.value - this.discount();
+    };
+};
 
-// DISCOUNT
-function invoiceDiscount(invoice) {
-    let discount = 0;
-    for (let i = 0; i < invoice.portions.length; i++) {
-        discount += invoice.portions[i].money;
-    }
-    return discount
-}
-// REST 
-function invoiceRest(invoice) {
-    return invoice.value - invoiceDiscount(invoice)
-}
-
-// OPEN
-function openInvoice(isSubmit) {
-
-    let key = 0
-    if (isSubmit) {
-        invoices[invoices.length] = {
-            value: Number((document.getElementById('total-money').value).replace(',', '.')),
-            portions: []
-        };
-        key = (invoices.length - 1);
-    } else {
-        key = (document.getElementById('key').value)
-    }
-
-    refreshInvoiceInfo(invoices[invoices.length - 1], key);
-    handleMoney(false, key)
+document.querySelector('#button-open-invoice').addEventListener('click', () => {
+    const value = document.querySelector('#total-money').value;
+    invoices.push(new Invoice(invoices.length, value, []));
+    document.querySelector('#key').value = invoices[invoices.length - 1].id;
     openForm();
-}
-// CLOSE
-function finishInvoice() {
-    closeForm();
-}
+});
+
+// SUBMIT EVENT
+document.querySelector('.portions-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.querySelector('#key').value;
+
+    const data = getData();
+    if(data) invoices[id].portions.push(data);
+
+    refreshInvoiceInfo(id);
+
+    handleMoney(true, id)
+});
 
 // INFO
-function refreshInvoiceInfo(invoice, key) {
-    console.log(invoice)
-    document.getElementById('key').value = key;
-    document.getElementById('total-invoice').value = (invoice.value).toFixed(2);
-    document.getElementById('rest-invoice').value = (invoiceRest(invoice)).toFixed(2);
-    document.getElementById('discount-invoice').value = (invoiceDiscount(invoice)).toFixed(2);
-}
+function refreshInvoiceInfo(id) {
+    document.querySelector('#value-invoice').value = invoices[id].value;
+    document.querySelector('#discount-invoice').value = invoices[id].discount();
+    document.querySelector('#rest-invoice').value = invoices[id].rest();
+};
+
+let invoices = []
 
 // PORTION
 const table = document.querySelector('.portions-table');
@@ -52,12 +50,12 @@ const table = document.querySelector('.portions-table');
 function getData() {
 
     const data = {
-        money: Number((document.getElementById('money').value).replace(',', '.')),
+        value: Number((document.getElementById('money').value).replace(',', '.')),
         check: [
             document.getElementById('checkbox-vitor').checked,
             document.getElementById('checkbox-debora').checked,
             document.getElementById('checkbox-samanta').checked,
-            document.getElementById('checkbox-fernanda').checked,
+            document.getElementById('checkbox-fernanda').checked
         ]
     };
 
@@ -79,23 +77,23 @@ function fillCells(rows) {
 
         trueCells.forEach(cell => {
             cell.innerText = moneyCell;
-        })
-
+        });
     });
-}
+};
 
-function handleMoney(isSubmit, key) {
+
+function handleMoney(isSubmit, id) {
 
     table.innerHTML = '';
-    if (isSubmit) invoices[key].portions[invoices[key].portions.length] = getData();
-    refreshInvoiceInfo(invoices[key], key);
-    createTableHeader();
-    createRow({ money: document.getElementById('rest-invoice').value, check: [true, true, true, true] })
 
-    invoices[key].portions.forEach((content, i) => {
+    createTableHeader();
+
+    createRow({ value: document.querySelector('#rest-invoice').value, check: [true, true, true, true] });
+
+    invoices[id].portions.forEach((content, i) => {
         if (content) {
-            createRow(content, i)
-        }
+            createRow(content, i);
+        };
     });
 
     const rows = document.querySelectorAll('.portions-table tr.body-row');
@@ -103,13 +101,3 @@ function handleMoney(isSubmit, key) {
     createLastRow(rows);
 
 };
-
-// SUBMIT EVENT
-document.querySelector('.portions-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    handleMoney(true, document.getElementById('key').value);
-});
-
-// onload Page
-
-handleMoney(false, (invoices.length - 1))
