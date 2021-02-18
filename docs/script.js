@@ -12,12 +12,10 @@ function Invoice(id, money, portions) {
     this.rest = function () {
         return this.value - this.discount();
     };
-    this.valueVitor = function () {
-        let total = (this.rest() / 4);
-        this.portions.forEach(portion => {
-            portion
-        })
-    }
+    this.totalDebora = 0;
+    this.totalFernanda = 0;
+    this.totalSamanta = 0;
+    this.totalVitor = 0;
 };
 
 // INFO
@@ -60,17 +58,33 @@ document.querySelector('#button-choose-invoice').addEventListener('click', () =>
 });
 
 // Create invoice
-document.querySelector('#button-create-invoice').addEventListener('click', () => {
+document.getElementById('button-create-invoice').addEventListener('click', () => {
     const value = document.querySelector('#total-money').value;
     invoices.push(new Invoice(invoices.length, value, []));
     document.querySelector('#key').value = invoices[invoices.length - 1].id;
     openForm();
 });
 
+document.getElementById('button-finish-invoice').addEventListener('click', () => {
+    const demo = table.querySelector('tr:last-child');
+    const id = document.querySelector('#key').value;
+    invoices[id].totalDebora = Number(demo.querySelector('td:nth-child(2)').innerHTML);
+    invoices[id].totalFernanda = Number(demo.querySelector('td:nth-child(3)').innerHTML);
+    invoices[id].totalSamanta = Number(demo.querySelector('td:nth-child(4)').innerHTML);
+    invoices[id].totalVitor = Number(demo.querySelector('td:nth-child(5)').innerHTML);
+})
+
 // Create Portion of invoice
 document.querySelector('.portions-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const id = document.querySelector('#key').value;
+    
+    document.getElementById('money').value = '';
+    document.getElementById('checkbox-debora').checked = false;
+    document.getElementById('checkbox-fernanda').checked = false;
+    document.getElementById('checkbox-samanta').checked = false;
+    document.getElementById('checkbox-vitor').checked = false;
+
 
     const data = getData();
     if (data) invoices[id].portions.push(data);

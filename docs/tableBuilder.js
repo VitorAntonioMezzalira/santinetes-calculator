@@ -1,7 +1,7 @@
 // CREATE TABLE HEADER
 function createTableHeader() {
 
-    const headersNames = ['Valor', 'Vitor', 'Debora', 'Fernanda', 'Samanta'];
+    const headersNames = ['Valor', 'Debora', 'Fernanda', 'Samanta', 'Vitor'];
 
     const firstRow = document.createElement('TR');
 
@@ -52,7 +52,7 @@ function createRow(contents, i) {
     row.appendChild(moneyCell);
     row.setAttribute('class', 'body-row')
 
-    const names = ['vitor', 'debora', 'fernanda', 'samanta']
+    const names = ['debora', 'fernanda', 'samanta', 'vitor']
 
     //
     for (let i = 0; i < 4; i++) {
