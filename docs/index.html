@@ -2,100 +2,102 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            padding: 0;
-            margin: 0;
-        }
-
-        .portion-calculator {
-            display: none;
-            background-color: #eeeeee;
-        }
-
-        .portions-table tr td {
-            text-align: right;
-        }
-
-        .portions-table tr th {
-            width: 5rem;
-        }
-
-        .true {
-            background-color: #aaffaa;
-        }
-
-        .false {
-            background-color: #ffaaaa;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <title>Document</title>
 </head>
 
 <body>
 
-    <p>
-        <label for="total-money">Valor da Nota: </label>
-        <input type="text" id="total-money">
-        <button id="button-create-invoice">Iniciar</button>
-    </p>
+  <div class="interface">
 
-    <div class="portion-calculator">
-        <form class="portions-form">
-            <p><label for="money">Parte: </label><input id="money" type="text"><input id="submit-money" type="submit"
-                    value="Calcular"></p>
+    <header class="header"></header>
 
-            <fieldset>
+    <main class="main">
+      <div class="main-container">
 
-                <legend>Quem Consumiu?</legend>
-                <input id="checkbox-debora" type="checkbox"><label for="checkbox-debora">Debora</label>
-                <input id="checkbox-samanta" type="checkbox"><label for="checkbox-samanta">Samanta</label>
-                <input id="checkbox-fernanda" type="checkbox"><label for="checkbox-fernanda">Fernanda</label>
-                <input id="checkbox-vitor" type="checkbox"><label for="checkbox-vitor">Vitor</label>
-
-            </fieldset>
-        </form>
-        <table class="portions-table">
-            <!-- Calculated Portions -->
+        <table class="table-form">
+          <tr>
+            <td><label for="total-money">Valor da Nota: </label></td>
+            <td><input class="input-primary" type="text" id="total-money"><button class="button-primary" id="button-create-invoice">Nova Nota</button></td>
+          </tr>
         </table>
-        <div class="invoice-info">
-            <p>
-                <label for="key">Nota: </label>
-                <input id="key" type="text"> 
-                <button id="button-choose-invoice">Abrir Nota</button>
-            </p>
-            <p><label for="value-invoice">Total: </label><input disabled="true" id="value-invoice" type="text"></p>
-            <p><label for="discount-invoice">Descontos: </label><input disabled="true" id="discount-invoice" type="text"></p>
-            <p><label for="rest-invoice">Resto: </label><input disabled="true" id="rest-invoice" type="text"></p>
-        </div>
 
-    </div>
+        <section class="portion-section">
+          <table class="table-form portions-form">
+            <tr>
+              <td><label for="money">Valor da porção: </label></td>
+              <td><input class="input-primary" id="money" type="text"><button class="button-primary" id="submit-money">Calcular</button></td>
+            </tr>
+          </table>
+          <div class="checkbox-santinetes">
+            <h3>Quem Consumiu?</h3>
+            <ul class="checkboxes">
+              <li>Debora</li>
+              <li>Fernanda</li>
+              <li>Samanta</li>
+              <li>Vitor</li>
+            </ul>
+          </div>
 
-    <button id="button-finish-invoice">Finalizar Nota</button>
+          <table class="portions-table table">
+            <!-- Calculated Portions -->
+          </table>
+          <table class="table-form invoice-info">
+            <tr>
+              <td><label for="value-invoice">Valor da Nota: </label></td>
+              <td><input class="input-primary" id="value-invoice" type="text"></td>
+            </tr>
+            <tr>
+              <td><label for="discount-invoice">Descontos: </label></td>
+              <td><input class="input-primary" disabled="true" id="discount-invoice" type="text"></td>
+            </tr>
+            <tr>
+              <td><label for="rest-invoice">Resto: </label></td>
+              <td><input class="input-primary" disabled="true" id="rest-invoice" type="text"></td>
+            </tr>
+          </table>
 
-    <table class="invoices-table">
-        <!-- Calculated Invoices -->
-    </table>
+          <p>
+            <button class="button-primary" id="button-finish-invoice">Salvar</button>
+          </p>
 
-    <script type="text/javascript" src="./script.js"></script>
-    <script type="text/javascript" src="./tableBuilder.js"></script>
+        </section>
 
-    <script type="text/javascript">
+        <table class="table" id="invoices-table">
+          <!-- Calculated Invoices -->
+        </table>
+      </div>
 
-        const portionCalculator = document.querySelector('.portion-calculator');
+    </main>
 
-        function openForm() {
-            portionCalculator.style.display = 'block';
-        }
+    <footer class="footer"></footer>
+  </div>
 
-        function closeForm() {
-            portionCalculator.style.display = 'none';
-        }
+  <script type="text/javascript" src="./script.js"></script>
+  <script type="text/javascript" src="./portions-table-builder.js"></script>
+  <script type="text/javascript" src="./invoices-table-builder.js"></script>
 
-    </script>
+  <script type="text/javascript">
+
+    const checkboxes = document.querySelectorAll('.checkboxes li');
+
+    checkboxes.forEach(checkbox => {
+
+      checkbox.addEventListener('click', () => {
+
+        if (checkbox.className === 'on') {
+          checkbox.classList.remove('on');
+        } else {
+          checkbox.classList.add('on');
+        };
+
+      });
+
+    });
+
+  </script>
 </body>
 
 </html>
